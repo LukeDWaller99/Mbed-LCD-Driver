@@ -95,6 +95,13 @@ class LCD{
      */
     LCD(PinName RS, PinName RW, PinName Enable, PinName D0, PinName D1, PinName D2, PinName D3, PinName D4, PinName D5, PinName D6, PinName D7);
 
+    /**
+     * @brief Send data to the control register of the LCD display
+     * 
+     * @param cmd 
+     */
+    void LCD_cmd(unsigned char cmd);
+
     /** 
      * Set Cursor on LCD Display
      * 
@@ -113,17 +120,17 @@ class LCD{
     /**
      * Outputs char to the LCD
      *
-     * @param 
-     * @param 
+     * @param data 
+     * @param length length of char array being outputted (default 16)
      */
-    void put_char_array(char *data, int length);
+    void put_char_array(char *data, int length=16);
  
     /**
      * @brief Decimal value to be written to the display
      * 
      * @param decimal_val 
      */
-    void put_decimal(int decimal_val);
+    void put_integer(int decimal_val);
 
     /**
      * @brief Float value to be written to the display  
@@ -132,6 +139,49 @@ class LCD{
      * @param precision 
      */
     void put_float(float float_val, int precision=3);
+
+    /**
+     * @brief Boolean value to be written to the display
+     * 
+     * @param value 
+     */
+    void put_bool(bool value);
+
+    /**
+     * @brief Clear the LCD
+     * 
+     */
+    void clear_LCD();
+
+    /**
+     * @brief Move LCD display left by 1 block
+     * 
+     */
+    void move_disp_left();
+
+    /**
+     * @brief Move LCD display right by 1 block
+     * 
+     */
+    void move_disp_right();
+
+    /**
+     * @brief Move LCD cursor left by 1 block
+     * 
+     */
+    void move_cursor_left();
+
+    /**
+     * @brief Move LCD cursor right by 1 block
+     * 
+     */
+    void move_cursor_right();
+
+    void cursor_on();
+
+    void cursor_off();
+
+    void cursor_blinking();
 
     /** Shorthand for writing a decimal value to the LCD */
     void operator=(int value);
@@ -142,14 +192,28 @@ class LCD{
     /** Shorthand for writing a char to the LCD */
     void operator=(char character);
 
-    private:
+    /** Shorthand for writing a long to the LCD */
+    void operator=(long value);
 
-    /**
-     * @brief Send data to the control register of the LCD display
-     * 
-     * @param cmd 
-     */
-    void LCD_cmd(unsigned char cmd);
+    /** Shorthand for writing a double to the LCD */
+    void operator=(double value);
+
+    /** Shorthand for writing a boolean value to the LCD */
+    void operator=(bool value);
+
+    /** Shorthand for moving display left */
+    void operator<<(int number);
+
+    /** Shorthand for moving display right */
+    void operator>>(int number);
+
+    /** Shorthand for moving cursor left */
+    void operator<(int number);
+
+    /** Shorthand for moving cursor right */
+    void operator>(int number);
+
+    private:
 
     /**
      * @brief Waits for the LCD to be ready to receive data

@@ -37,7 +37,7 @@
 /**
  * Methods
  */
- LCD::LCD(PinName RS, PinName RW, PinName Enable, PinName D4, PinName D5, PinName D6, PinName D7):
+LCD::LCD(PinName RS, PinName RW, PinName Enable, PinName D4, PinName D5, PinName D6, PinName D7):
            _rs(RS), _rw(RW), _enable(Enable), _data(D4, D5, D6, D7){
         _mode = 1;
         _data.output();
@@ -52,7 +52,7 @@
         LCD_cmd(LCD_ENTRY_MODE_AUTO_INCREMENT);
     };
 
- LCD::LCD(PinName RS, PinName RW, PinName Enable, PinName D0, PinName D1, PinName D2, PinName D3, PinName D4, PinName D5, PinName D6, PinName D7):
+LCD::LCD(PinName RS, PinName RW, PinName Enable, PinName D0, PinName D1, PinName D2, PinName D3, PinName D4, PinName D5, PinName D6, PinName D7):
            _rs(RS), _rw(RW), _enable(Enable), _data(D0, D1, D2, D3, D4, D5, D6, D7){
         _mode = 0;
         _data.output();
@@ -85,8 +85,6 @@ void LCD::LCD_cmd(unsigned char cmd){
         strobe_LCD();
     }
 }
-
-
 
 void LCD::cursor_Set(int column, int row){
     if(row == 1){
@@ -134,21 +132,21 @@ void LCD::put_char_array(char *data, int length){
     }
 }
 
-void LCD::put_decimal(int decimal_val){
+void LCD::put_integer(int decimal_val){
     char dec[sizeof(decimal_val)];
     int array = 0;
     if(decimal_val == 0){
         put_char('0');
     } else {
-    while (decimal_val > 0){
-        dec[array] = (decimal_val % 10) + 0x30;
-        decimal_val /= 10;
-        array++;
-    }
-    for (int i = array - 1; i >= 0; i--){
-        unsigned char character = dec[i];
-        put_char(character);
-    }
+        while (decimal_val > 0){
+            dec[array] = (decimal_val % 10) + 0x30;
+            decimal_val /= 10;
+            array++;
+        }
+        for (int i = array - 1; i >= 0; i--){
+            unsigned char character = dec[i];
+            put_char(character);
+        }
     }
 }
 
@@ -159,6 +157,32 @@ void LCD::put_float(float float_val, int precision){
     put_char_array(value, length);
 }
 
-void LCD::operator=(int value){put_decimal(value);}
+void LCD::put_bool(bool value){
+    char trueVal[4] = {'T','R','U','E'};
+    char falseVal[5] = {'F','A','L','S','E'};
+    if (value == true){
+        put_char_array(trueVal, 4);
+    } else {
+        put_char_array(falseVal, 5);
+    }
+}   
+
+void LCD::clear_LCD(){LCD_cmd(LCD_CLEAR);}
+void LCD::move_disp_left(){LCD_cmd(LCD_SHIFT_DISP_LEFT);}
+void LCD::move_disp_right(){LCD_cmd(LCD_SHIFT_DISP_RIGHT);}
+void LCD::move_cursor_left(){LCD_cmd(LCD_MOVE_CURSOR_LEFT);}
+void LCD::move_cursor_right(){LCD_cmd(LCD_MOVE_CURSOR_LEFT);}
+void LCD::cursor_on(){LCD_cmd(LCD_DISP_ON_CURSOR_ON);}
+void LCD::cursor_off(){LCD_cmd(LCD_DISP_ON_CURSOR_OFF);}
+void LCD::cursor_blinking(){LCD_cmd(LCD_DISP_ON_CURSOR_BLINKING);}
+
+void LCD::operator= (int value){put_integer(value);}
 void LCD::operator=(float value){put_float(value);}
 void LCD::operator=(char character){put_char(character);}
+void LCD::operator=(long value){put_integer(value);}
+void LCD::operator=(double value){put_float(value);}
+void LCD::operator=(bool value){put_bool(value);}
+void LCD::operator<<(int number){for(int i = 0; i < number; i++){move_disp_left();}}
+void LCD::operator>>(int number){for(int i = 0; i < number; i++){move_disp_right();}}
+void LCD::operator<(int number){for(int i = 0; i < number; i++){move_cursor_left();}}
+void LCD::operator>(int number){for(int i = 0; i < number; i++){move_cursor_right();}}
